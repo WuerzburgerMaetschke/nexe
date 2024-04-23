@@ -207,6 +207,7 @@ export class NexeCompiler {
     }
     return new Promise<void>((resolve, reject) => {
       spawn(command, args, {
+        shell: true,
         cwd: this.src,
         env: this.env,
         stdio: this.log.verbose ? 'inherit' : 'ignore',
