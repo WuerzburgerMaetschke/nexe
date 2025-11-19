@@ -2,7 +2,7 @@ import { delimiter, resolve, normalize, join } from 'path'
 import { Buffer } from 'buffer'
 import { createReadStream, ReadStream } from 'fs'
 import { spawn } from 'child_process'
-import { Logger, LogStep } from './logger'
+import { Logger, LogStep } from './logger.js'
 import {
   readFileAsync,
   writeFileAsync,
@@ -13,8 +13,8 @@ import {
   bound,
   semverGt,
   wrap,
-} from './util'
-import { NexeOptions, version } from './options'
+} from './util.js'
+import { NexeOptions, version } from './options.js'
 import { NexeTarget } from './target.js'
 import { PassThrough, Readable, Stream, Transform } from 'stream'
 import MultiStream from 'multistream'

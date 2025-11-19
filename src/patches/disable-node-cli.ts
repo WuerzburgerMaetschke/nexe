@@ -1,5 +1,5 @@
-import { NexeCompiler } from '../compiler'
-import { semverGt } from '../util'
+import { NexeCompiler } from '../compiler.js'
+import { semverGt } from '../util.js'
 
 export default async function disableNodeCli(compiler: NexeCompiler, next: () => Promise<void>) {
   if (compiler.options.enableNodeCli) {

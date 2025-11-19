@@ -1,4 +1,4 @@
-import { NexeCompiler } from '../compiler'
+import { NexeCompiler } from '../compiler.js'
 
 export default async function nodeRc(compiler: NexeCompiler, next: () => Promise<void>) {
   const options = compiler.options.rc

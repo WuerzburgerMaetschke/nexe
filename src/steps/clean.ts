@@ -1,6 +1,6 @@
-import { NexeCompiler } from '../compiler'
-import { rimrafAsync } from '../util'
-import { NexeTarget } from '../target'
+import { NexeCompiler } from '../compiler.js'
+import { rimrafAsync } from '../util.js'
+import { NexeTarget } from '../target.js'
 
 export default async function clean(compiler: NexeCompiler, next: () => Promise<any>) {
   const { options } = compiler

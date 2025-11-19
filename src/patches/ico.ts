@@ -1,6 +1,6 @@
 import { normalize } from 'path'
-import { readFileAsync } from '../util'
-import { NexeCompiler } from '../compiler'
+import { readFileAsync } from '../util.js'
+import { NexeCompiler } from '../compiler.js'
 
 export default async function ico(compiler: NexeCompiler, next: () => Promise<void>) {
   const iconFile = compiler.options.ico

@@ -1,15 +1,15 @@
 import { EOL } from 'os'
 import { compose } from 'app-builder'
-import { NexeCompiler, NexeError } from './compiler'
-import { normalizeOptions, NexeOptions, NexePatch } from './options'
-import resource from './steps/resource'
-import clean from './steps/clean'
-import cli from './steps/cli'
-import bundle from './steps/bundle'
-import download from './steps/download'
-import shim from './steps/shim'
-import artifacts from './steps/artifacts'
-import patches from './patches'
+import { NexeCompiler, NexeError } from './compiler.js'
+import { normalizeOptions, NexeOptions, NexePatch } from './options.js'
+import resource from './steps/resource.js'
+import clean from './steps/clean.js'
+import cli from './steps/cli.js'
+import bundle from './steps/bundle.js'
+import download from './steps/download.js'
+import shim from './steps/shim.js'
+import artifacts from './steps/artifacts.js'
+import patches from './patches/index.js'
 
 async function compile(
   compilerOptions?: Partial<NexeOptions>,
@@ -46,4 +46,5 @@ async function compile(
 }
 
 export { compile, NexeCompiler }
-export { argv, version, NexeOptions, help } from './options'
+export { argv, version, NexeOptions, help } from './options.js'
+export { NexeTarget, getTarget } from './target.js'

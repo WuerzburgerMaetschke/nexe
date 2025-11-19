@@ -2,6 +2,7 @@
   "name": "nexe-fs",
   "version": "1.0.1",
   "description": "Virtual File System used by nexe",
+  "type": "module",
   "main": "bundle.js",
   "files": [
     "*.d.ts",

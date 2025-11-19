@@ -1,6 +1,6 @@
-import { NexeCompiler } from '../compiler'
+import { NexeCompiler } from '../compiler.js'
 import { parse } from 'meriyah'
-import { wrap, semverGt } from '../util'
+import { wrap, semverGt } from '../util.js'
 
 function walkSome(node: any, visit: Function) {
   if (!node || typeof node.type !== 'string' || node._visited) {

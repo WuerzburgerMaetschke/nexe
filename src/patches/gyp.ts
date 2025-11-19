@@ -1,4 +1,4 @@
-import { NexeCompiler } from '../compiler'
+import { NexeCompiler } from '../compiler.js'
 
 export default async function nodeGyp(
   { files, replaceInFileAsync }: NexeCompiler,

@@ -1,4 +1,4 @@
-import { NexeCompiler } from '../compiler'
+import { NexeCompiler } from '../compiler.js'
 
 export default async function buildFixes(compiler: NexeCompiler, next: () => Promise<void>) {
   if (!compiler.target.version.startsWith('8.2')) {

@@ -1,6 +1,6 @@
 import { ZipFS, getLibzipSync } from '@yarnpkg/libzip'
 import { patchFs, npath, PosixFS, NodeFS } from '@yarnpkg/fslib'
-import { SnapshotZipFS } from './SnapshotZipFS'
+import { SnapshotZipFS } from './SnapshotZipFS.js'
 import * as assert from 'assert'
 import * as constants from 'constants'
 import { dirname } from 'path'

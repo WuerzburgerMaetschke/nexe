@@ -1,7 +1,7 @@
-import { NexeCompiler, NexeError } from '../compiler'
+import { NexeCompiler, NexeError } from '../compiler.js'
 import { resolve, relative } from 'path'
 import resolveFiles, { resolveSync } from 'resolve-dependencies'
-import { dequote, STDIN_FLAG, semverGt, each } from '../util'
+import { dequote, STDIN_FLAG, semverGt, each } from '../util.js'
 import { Readable } from 'stream'
 
 function getStdIn(stdin: Readable): Promise<string> {
