@@ -1,6 +1,7 @@
 import fetch from 'node-fetch'
 import * as tar from 'tar'
 import { createWriteStream } from 'fs'
+import { mkdir } from 'fs/promises'
 import { pipeline } from 'stream'
 import { promisify } from 'util'
 import { pathExistsAsync } from '../util'
@@ -34,6 +35,9 @@ async function fetchNodeSourceAsync(dest: string, url: string, step: LogStep, op
   })
 
   step.log('Extracting Node...')
+
+  // Ensure the destination directory exists before extracting
+  await mkdir(dest, { recursive: true })
 
   // Extract tar.gz directly from the stream
   await pipelineAsync(
