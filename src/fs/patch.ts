@@ -21,9 +21,13 @@ const patches = (process as any).nexe.patches || {}
 const originalPatches = { ...patches }
 delete (process as any).nexe
 
-function shimFs(binary: NexeHeader, fs: typeof import('fs') = require('fs')) {
+async function shimFs(binary: NexeHeader, fs?: typeof import('fs')) {
   if (originalFsMethods !== null) {
     return
+  }
+  
+  if (!fs) {
+    fs = await import('fs')
   }
 
   originalFsMethods = Object.assign({}, fs)

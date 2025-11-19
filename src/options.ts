@@ -228,7 +228,7 @@ function isCli(options?: Partial<NexeOptions>) {
   return argv === options
 }
 
-function normalizeOptions(input?: Partial<NexeOptions>): NexeOptions {
+async function normalizeOptions(input?: Partial<NexeOptions>): Promise<NexeOptions> {
   const options = Object.assign({}, defaults, input) as NexeOptions
   const opts = options as any
   const cwd = (options.cwd = resolve(options.cwd))
@@ -269,16 +269,17 @@ function normalizeOptions(input?: Partial<NexeOptions>): NexeOptions {
       : `${options.output || options.name}`
   options.output = resolve(cwd, options.output)
 
-  const requireDefault = (x: string) => {
+  const requireDefault = async (x: string) => {
     if (typeof x === 'string') {
-      return require(x).default
+      const module = await import(x)
+      return module.default
     }
     return x
   }
 
   options.mangle = 'mangle' in opts ? opts.mangle : true
-  options.plugins = flatten(opts.plugin, options.plugins).map(requireDefault)
-  options.patches = flatten(opts.patch, options.patches).map(requireDefault)
+  options.plugins = await Promise.all(flatten(opts.plugin, options.plugins).map(requireDefault))
+  options.patches = await Promise.all(flatten(opts.patch, options.patches).map(requireDefault))
 
   if ((!options.mangle && !options.bundle) || options.patches.length) {
     options.build = true

@@ -42,7 +42,8 @@ export default async function bundle(compiler: NexeCompiler, next: any) {
 
   let code = ''
   if (typeof doBundle === 'string') {
-    code = await require(doBundle).createBundle(compiler.options)
+    const bundleModule = await import(doBundle)
+    code = await bundleModule.createBundle(compiler.options)
   }
 
   if (input === STDIN_FLAG && (code = code || dequote(await getStdIn(process.stdin)))) {

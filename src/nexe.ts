@@ -20,7 +20,7 @@ async function compile(
     compiler: NexeCompiler | null = null
 
   try {
-    options = normalizeOptions(compilerOptions)
+    options = await normalizeOptions(compilerOptions)
     compiler = new NexeCompiler(options)
     await compose(
       clean,

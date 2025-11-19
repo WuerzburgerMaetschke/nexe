@@ -10,8 +10,10 @@ Nexe 6.0 is a major modernization release with full ES Module support and update
   * **BREAKING**: Converted entire codebase to ES Modules (ESM)
   * **BREAKING**: Node.js >= 18 now required (was >= 10)
   * Replaced CommonJS `require()` with ESM `import` statements
+  * Converted all `require()` calls to dynamic `import()` for runtime module loading
   * Updated TypeScript to target ES2022 with ESM modules
   * Added `.js` extensions to all relative imports per ESM requirements
+  * Configured webpack `extensionAlias` to resolve `.js` imports to `.ts` source files
 
 #### Major Dependency Updates
   * `chalk`: 4.1.2 → 5.6.2 (ESM)
