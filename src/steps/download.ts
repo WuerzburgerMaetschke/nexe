@@ -1,25 +1,51 @@
-import download = require('download')
+import fetch from 'node-fetch'
+import * as tar from 'tar'
+import { createWriteStream } from 'fs'
+import { pipeline } from 'stream'
+import { promisify } from 'util'
 import { pathExistsAsync } from '../util'
 import { LogStep } from '../logger'
-import { IncomingMessage } from 'http'
 import { NexeCompiler, NexeError } from '../compiler'
-import { dirname } from 'path'
+import { dirname, join } from 'path'
 
-function fetchNodeSourceAsync(dest: string, url: string, step: LogStep, options = {}) {
+const pipelineAsync = promisify(pipeline)
+
+async function fetchNodeSourceAsync(dest: string, url: string, step: LogStep, options = {}) {
   const setText = (p: number) => step.modify(`Downloading Node: ${p.toFixed()}%...`)
-  return download(url, dest, Object.assign(options, { extract: true, strip: 1 }))
-    .on('response', (res: IncomingMessage) => {
-      const total = +res.headers['content-length']!
-      let current = 0
-      res.on('data', (data) => {
-        current += data.length
+
+  const response = await fetch(url)
+  if (!response.ok) {
+    throw new Error(`Failed to download: ${response.statusText}`)
+  }
+
+  const total = parseInt(response.headers.get('content-length') || '0', 10)
+  let current = 0
+
+  // Create a transform stream to track progress
+  const { Transform } = require('stream')
+  const progressStream = new Transform({
+    transform(chunk: any, encoding: any, callback: any) {
+      current += chunk.length
+      if (total > 0) {
         setText((current / total) * 100)
-        if (current === total) {
-          step.log('Extracting Node...')
-        }
-      })
+      }
+      callback(null, chunk)
+    },
+  })
+
+  step.log('Extracting Node...')
+
+  // Extract tar.gz directly from the stream
+  await pipelineAsync(
+    response.body,
+    progressStream,
+    tar.extract({
+      cwd: dest,
+      strip: 1,
     })
-    .then(() => step.log(`Node source extracted to: ${dest}`))
+  )
+
+  step.log(`Node source extracted to: ${dest}`)
 }
 
 async function fetchPrebuiltBinary(compiler: NexeCompiler, step: any) {
@@ -27,23 +53,37 @@ async function fetchPrebuiltBinary(compiler: NexeCompiler, step: any) {
     filename = compiler.getNodeExecutableLocation(target)
 
   try {
-    await download(remoteAsset, dirname(filename), compiler.options.downloadOptions).on(
-      'response',
-      (res: IncomingMessage) => {
-        const total = +res.headers['content-length']!
-        let current = 0
-        res.on('data', (data) => {
-          current += data.length
-          step!.modify(`Downloading...${((current / total) * 100).toFixed()}%`)
-        })
+    const response = await fetch(remoteAsset)
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        throw new NexeError(`${remoteAsset} is not available, create it using the --build flag`)
       }
-    )
-  } catch (e: any) {
-    if (e.statusCode === 404) {
-      throw new NexeError(`${remoteAsset} is not available, create it using the --build flag`)
-    } else {
-      throw new NexeError('Error downloading prebuilt binary: ' + e)
+      throw new Error(`Failed to download: ${response.statusText}`)
     }
+
+    const total = parseInt(response.headers.get('content-length') || '0', 10)
+    let current = 0
+
+    // Create a transform stream to track progress
+    const { Transform } = require('stream')
+    const progressStream = new Transform({
+      transform(chunk: any, encoding: any, callback: any) {
+        current += chunk.length
+        if (total > 0) {
+          step!.modify(`Downloading...${((current / total) * 100).toFixed()}%`)
+        }
+        callback(null, chunk)
+      },
+    })
+
+    const fileStream = createWriteStream(filename)
+    await pipelineAsync(response.body, progressStream, fileStream)
+  } catch (e: any) {
+    if (e instanceof NexeError) {
+      throw e
+    }
+    throw new NexeError('Error downloading prebuilt binary: ' + e)
   }
 }
 
