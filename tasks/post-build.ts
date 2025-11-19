@@ -26,6 +26,6 @@ function inject(filename: string, version?: string) {
 
 function cp(from: string, to: string) {
   const file = readFileSync(from)
-  writeFileSync(to, file)
+  writeFileSync(to, file as any)
   console.log('Copied: ', from, 'To: ', to)
 }

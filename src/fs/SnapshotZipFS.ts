@@ -25,7 +25,7 @@ export type SnapshotZipFSOptions = {
   root: string
 }
 
-const uniqBy = (arr: Array<string | Dirent>, pick: (...arg: any[]) => any) => {
+const uniqBy = (arr: Array<string | Dirent<PortablePath>>, pick: (...arg: any[]) => any) => {
   const seen = new Set()
   return arr.filter((x) => {
     const key = pick(x)
@@ -34,8 +34,8 @@ const uniqBy = (arr: Array<string | Dirent>, pick: (...arg: any[]) => any) => {
     return true
   })
 }
-function uniqReaddir(arr: Array<string | Dirent>) {
-  return uniqBy(arr, (s: string | Dirent) => (typeof s === 'string' ? s : s.name))
+function uniqReaddir(arr: Array<string | Dirent<PortablePath>>) {
+  return uniqBy(arr, (s: string | Dirent<PortablePath>) => (typeof s === 'string' ? s : s.name))
 }
 
 export class SnapshotZipFS extends BasePortableFakeFS {
@@ -245,15 +245,18 @@ export class SnapshotZipFS extends BasePortableFakeFS {
     p: PortablePath,
     opts: { withFileTypes: false } | null
   ): Promise<Array<Filename>>
-  async readdirPromise(p: PortablePath, opts: { withFileTypes: true }): Promise<Array<Dirent>>
+  async readdirPromise(
+    p: PortablePath,
+    opts: { withFileTypes: true }
+  ): Promise<Array<Dirent<PortablePath>>>
   async readdirPromise(
     p: PortablePath,
     opts: { withFileTypes: boolean }
-  ): Promise<Array<Filename> | Array<Dirent>>
+  ): Promise<Array<Filename> | Array<Dirent<PortablePath>>>
   async readdirPromise(
     p: PortablePath,
     opts?: { withFileTypes?: boolean } | null
-  ): Promise<Array<string | Dirent>> {
+  ): Promise<Array<string | Dirent<PortablePath>>> {
     const fallback = async () => {
       return await this.baseFs.readdirPromise(p, opts as any)
     }
@@ -261,7 +264,7 @@ export class SnapshotZipFS extends BasePortableFakeFS {
       p,
       fallback,
       async (zipFs, { subPath }) => {
-        const fallbackPaths: Array<string | Dirent> = await fallback().catch(() => [])
+        const fallbackPaths: Array<string | Dirent<PortablePath>> = await fallback().catch(() => [])
         return Promise.resolve(
           uniqReaddir(fallbackPaths.concat(await zipFs.readdirPromise(subPath, opts as any)))
         )
@@ -274,9 +277,15 @@ export class SnapshotZipFS extends BasePortableFakeFS {
 
   readdirSync(p: PortablePath): Array<Filename>
   readdirSync(p: PortablePath, opts: { withFileTypes: false } | null): Array<Filename>
-  readdirSync(p: PortablePath, opts: { withFileTypes: true }): Array<Dirent>
-  readdirSync(p: PortablePath, opts: { withFileTypes: boolean }): Array<Filename> | Array<Dirent>
-  readdirSync(p: PortablePath, opts?: { withFileTypes?: boolean } | null): Array<string | Dirent> {
+  readdirSync(p: PortablePath, opts: { withFileTypes: true }): Array<Dirent<PortablePath>>
+  readdirSync(
+    p: PortablePath,
+    opts: { withFileTypes: boolean }
+  ): Array<Filename> | Array<Dirent<PortablePath>>
+  readdirSync(
+    p: PortablePath,
+    opts?: { withFileTypes?: boolean } | null
+  ): Array<string | Dirent<PortablePath>> {
     const fallback = () => {
       return this.baseFs.readdirSync(p, opts as any)
     }
@@ -284,7 +293,7 @@ export class SnapshotZipFS extends BasePortableFakeFS {
       p,
       fallback,
       (zipFs, { subPath }) => {
-        let fallbackPaths: Array<string | Dirent> = []
+        let fallbackPaths: Array<string | Dirent<PortablePath>> = []
         try {
           fallbackPaths = fallback()
         } catch (e) {}
@@ -393,6 +402,8 @@ export class SnapshotZipFS extends BasePortableFakeFS {
   ftruncateSync = ZipOpenFS.prototype.ftruncateSync
   unlinkPromise = ZipOpenFS.prototype.unlinkPromise
   unlinkSync = ZipOpenFS.prototype.unlinkSync
+  rmPromise = ZipOpenFS.prototype.rmPromise
+  rmSync = ZipOpenFS.prototype.rmSync
   unwatchFile = ZipOpenFS.prototype.unwatchFile
   utimesPromise = ZipOpenFS.prototype.utimesPromise
   utimesSync = ZipOpenFS.prototype.utimesSync

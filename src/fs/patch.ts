@@ -35,7 +35,7 @@ function shimFs(binary: NexeHeader, fs: typeof import('fs') = require('fs')) {
   const blobFd = realFs.openSync(binary.blobPath, 'r')
   const bytesRead = realFs.readSync(
     blobFd,
-    blob,
+    blob as any,
     0,
     binary.layout.resourceSize,
     binary.layout.resourceStart

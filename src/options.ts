@@ -7,7 +7,7 @@ import { EOL, homedir } from 'os'
 import chalk from 'chalk'
 import { resolveSync } from 'resolve-dependencies'
 const caw = require('caw')
-const c = process.platform === 'win32' ? chalk.constructor({ enabled: false }) : chalk
+const c = process.platform === 'win32' ? new chalk.Instance({ level: 0 }) : chalk
 
 export const version = '{{ version }}'
 

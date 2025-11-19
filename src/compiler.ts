@@ -164,7 +164,7 @@ export class NexeCompiler {
   @bound
   writeFileAsync(file: string, contents: string | Buffer) {
     this.assertBuild()
-    return writeFileAsync(join(this.src, file), contents)
+    return writeFileAsync(join(this.src, file), contents as any)
   }
 
   @bound
@@ -322,7 +322,7 @@ export class NexeCompiler {
         const trailers = Buffer.alloc(16)
         trailers.writeDoubleLE(codeSize, 0)
         trailers.writeDoubleLE(vfsSize, 8)
-        cb(null, toStream(Buffer.concat([sentinel, trailers])))
+        cb(null, toStream(Buffer.concat([sentinel as any, trailers as any])))
       }
     })
   }
