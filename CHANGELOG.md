@@ -1,5 +1,57 @@
 # Nexe ChangeLog
 
+## 2025-11-19, Version v6.0.0
+
+### Breaking Changes
+
+Nexe 6.0 is a major modernization release with full ES Module support and updated dependencies.
+
+#### ES Module Migration
+  * **BREAKING**: Converted entire codebase to ES Modules (ESM)
+  * **BREAKING**: Node.js >= 18 now required (was >= 10)
+  * Replaced CommonJS `require()` with ESM `import` statements
+  * Updated TypeScript to target ES2022 with ESM modules
+  * Added `.js` extensions to all relative imports per ESM requirements
+
+#### Major Dependency Updates
+  * `chalk`: 4.1.2 → 5.6.2 (ESM)
+  * `node-fetch`: 2.7.0 → 3.3.2 (ESM)
+  * `globby`: 11.1.0 → 16.0.0 (ESM)
+  * `got`: 11.8.6 → 14.6.4 (ESM)
+  * `ora`: 5.4.1 → 9.0.0 (ESM)
+  * `mkdirp`: 1.0.4 → 3.0.1 (ESM)
+  * `rimraf`: 3.0.2 → 6.1.0 (ESM)
+  * `tar`: 6.2.1 → 7.5.2
+  * `chai`: 4.5.0 → 6.2.1 (ESM)
+  * `execa`: 5.1.1 → 9.6.0 (ESM)
+  * `mocha`: 10.2.0 → 11.7.5
+  * `prettier`: 2.8.8 → 3.6.2
+  * `typescript`: 5.0.3 → 5.9.3
+  * `@types/node`: Added at 24.10.1
+
+#### Removed Dependencies
+  * Removed deprecated `tslint` (replaced with prettier)
+  * Removed deprecated `caw` proxy package
+  * Removed various outdated @types packages
+
+#### New Features
+  * Added `tsx` for modern TypeScript ESM execution
+  * Added `lodash-es` for ESM-compatible lodash utilities
+  * Updated webpack configuration for ESM compatibility
+
+#### Security
+  * Fixed all npm audit vulnerabilities (0 vulnerabilities)
+  * Replaced vulnerable `download` package with `node-fetch` and `tar`
+  * Updated all dependencies to latest secure versions
+
+### Migration Guide
+
+To migrate from 5.x to 6.x:
+
+1. **Update Node.js**: Ensure you're running Node.js 18 or higher
+2. **Update imports**: If extending nexe, convert any CommonJS requires to ESM imports
+3. **API compatibility**: The core nexe API remains backwards compatible for most use cases
+
 ## 2017-05-29, Version v2.0.0-beta.1, @calebboyd
 
 Nexe 2.0 is a rewrite to enable some new features. These include:

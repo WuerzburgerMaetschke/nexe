@@ -1,9 +1,9 @@
 import { join, dirname } from 'path'
 import * as fs from 'fs'
 import { promisify } from 'util'
-import { readFileAsync, writeFileAsync, isDirectoryAsync } from '../util'
-import mkdirpAsync = require('mkdirp')
-import { NexeCompiler } from '../compiler'
+import { readFileAsync, writeFileAsync, isDirectoryAsync } from '../util.js'
+import { mkdirp } from 'mkdirp'
+import { NexeCompiler } from '../compiler.js'
 
 const unlinkAsync = promisify(fs.unlink),
   readdirAsync = promisify(fs.readdir)
@@ -42,7 +42,7 @@ function maybeReadFileContentsAsync(file: string) {
 export default async function artifacts(compiler: NexeCompiler, next: () => Promise<void>) {
   const { src } = compiler
   const temp = join(src, 'nexe')
-  await mkdirpAsync(temp)
+  await mkdirp(temp)
   const tmpFiles = await readDirAsync(temp)
 
   await Promise.all(
@@ -60,7 +60,7 @@ export default async function artifacts(compiler: NexeCompiler, next: () => Prom
       const tempFile = join(temp, file.filename)
       const fileContents = await maybeReadFileContentsAsync(sourceFile)
 
-      await mkdirpAsync(dirname(tempFile))
+      await mkdirp(dirname(tempFile))
       await writeFileAsync(tempFile, fileContents)
       await compiler.writeFileAsync(file.filename, file.contents)
     })

@@ -1,9 +1,9 @@
 import { readFile, writeFile, stat } from 'fs'
 import { execFile } from 'child_process'
 import { promisify } from 'util'
-import rimraf = require('rimraf')
+import { rimraf } from 'rimraf'
 
-const rimrafAsync = promisify(rimraf)
+const rimrafAsync = rimraf
 export const STDIN_FLAG = '[stdin]'
 
 export async function each<T>(

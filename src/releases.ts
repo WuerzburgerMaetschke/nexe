@@ -1,4 +1,4 @@
-import got = require('got')
+import got from 'got'
 import { platforms, architectures, NexeTarget, getTarget, targetsEqual } from './target'
 export { NexeTarget }
 

@@ -1,11 +1,11 @@
 import fetch from 'node-fetch'
 import * as tar from 'tar'
 import { createWriteStream } from 'fs'
-import { pipeline } from 'stream'
+import { pipeline, Transform } from 'stream'
 import { promisify } from 'util'
-import { pathExistsAsync } from '../util'
-import { LogStep } from '../logger'
-import { NexeCompiler, NexeError } from '../compiler'
+import { pathExistsAsync } from '../util.js'
+import { LogStep } from '../logger.js'
+import { NexeCompiler, NexeError } from '../compiler.js'
 import { dirname, join } from 'path'
 
 const pipelineAsync = promisify(pipeline)
@@ -22,7 +22,6 @@ async function fetchNodeSourceAsync(dest: string, url: string, step: LogStep, op
   let current = 0
 
   // Create a transform stream to track progress
-  const { Transform } = require('stream')
   const progressStream = new Transform({
     transform(chunk: any, encoding: any, callback: any) {
       current += chunk.length
@@ -36,13 +35,17 @@ async function fetchNodeSourceAsync(dest: string, url: string, step: LogStep, op
   step.log('Extracting Node...')
 
   // Extract tar.gz directly from the stream
+  const extractStream = tar.extract({
+    cwd: dest,
+    strip: 1,
+  })
+  
+  if (!response.body) throw new Error('No response body')
+  
   await pipelineAsync(
     response.body,
     progressStream,
-    tar.extract({
-      cwd: dest,
-      strip: 1,
-    })
+    extractStream as any
   )
 
   step.log(`Node source extracted to: ${dest}`)
@@ -66,7 +69,6 @@ async function fetchPrebuiltBinary(compiler: NexeCompiler, step: any) {
     let current = 0
 
     // Create a transform stream to track progress
-    const { Transform } = require('stream')
     const progressStream = new Transform({
       transform(chunk: any, encoding: any, callback: any) {
         current += chunk.length
@@ -76,6 +78,8 @@ async function fetchPrebuiltBinary(compiler: NexeCompiler, step: any) {
         callback(null, chunk)
       },
     })
+
+    if (!response.body) throw new Error('No response body')
 
     const fileStream = createWriteStream(filename)
     await pipelineAsync(response.body, progressStream, fileStream)

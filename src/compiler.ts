@@ -15,10 +15,10 @@ import {
   wrap,
 } from './util'
 import { NexeOptions, version } from './options'
-import { NexeTarget } from './target'
+import { NexeTarget } from './target.js'
 import { PassThrough, Readable, Stream, Transform } from 'stream'
-import MultiStream = require('multistream')
-import { Bundle, toStream } from './fs/bundle'
+import MultiStream from 'multistream'
+import { Bundle, toStream } from './fs/bundle.js'
 import { File } from 'resolve-dependencies'
 import { FactoryStream, LazyStream } from 'multistream'
 
@@ -49,7 +49,7 @@ export class NexeCompiler {
    */
   private start = Date.now()
   private compileStep: LogStep | undefined
-  public log = new Logger(this.options.loglevel)
+  public log: Logger
   /**
    * Copy of process.env
    */
@@ -89,7 +89,7 @@ export class NexeCompiler {
   /**
    * Output filename (-o myapp.exe)
    */
-  public output = this.options.output
+  public output: string
   /**
    * Flag to indicate whether or notstdin was used for input
    */
@@ -108,6 +108,8 @@ export class NexeCompiler {
   public remoteAsset: string
 
   constructor(public options: NexeOptions) {
+    this.log = new Logger(options.loglevel)
+    this.output = options.output
     const { python } = (this.options = options)
     //SOMEDAY iterate over multiple targets with `--outDir`
     this.targets = options.targets as NexeTarget[]

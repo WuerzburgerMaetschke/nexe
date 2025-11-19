@@ -1,9 +1,9 @@
 import { dirname, normalize, relative, resolve } from 'path'
 import { createWriteStream, chmodSync, statSync } from 'fs'
-import { NexeCompiler } from '../compiler'
-import { NexeTarget } from '../target'
-import { STDIN_FLAG } from '../util'
-import mkdirp = require('mkdirp')
+import { NexeCompiler } from '../compiler.js'
+import { NexeTarget } from '../target.js'
+import { STDIN_FLAG } from '../util.js'
+import { mkdirp } from 'mkdirp'
 
 /**
  * The "cli" step detects the appropriate input. If no input options are passed,
@@ -29,10 +29,8 @@ export default async function cli(compiler: NexeCompiler, next: () => Promise<vo
     deliverable
       .pipe(createWriteStream(output))
       .on('error', rej)
-      .once('close', (e: Error) => {
-        if (e) {
-          rej(e)
-        } else if (compiler.output) {
+      .once('close', () => {
+        if (compiler.output) {
           const output = compiler.output,
             mode = statSync(output).mode | 0o111,
             inputFileLogOutput = relative(

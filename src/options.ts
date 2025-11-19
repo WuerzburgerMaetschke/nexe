@@ -1,13 +1,12 @@
 import parseArgv from 'minimist'
-import { NexeCompiler, NexeError } from './compiler'
-import { isWindows, STDIN_FLAG } from './util'
+import { NexeCompiler, NexeError } from './compiler.js'
+import { isWindows, STDIN_FLAG } from './util.js'
 import { basename, extname, join, isAbsolute, resolve } from 'path'
-import { getTarget, NexeTarget } from './target'
+import { getTarget, NexeTarget } from './target.js'
 import { EOL, homedir } from 'os'
-import chalk from 'chalk'
+import chalk, { Chalk } from 'chalk'
 import { resolveSync } from 'resolve-dependencies'
-const caw = require('caw')
-const c = process.platform === 'win32' ? new chalk.Instance({ level: 0 }) : chalk
+const c = process.platform === 'win32' ? new Chalk({ level: 0 }) : chalk
 
 export const version = '{{ version }}'
 
@@ -258,9 +257,7 @@ function normalizeOptions(input?: Partial<NexeOptions>): NexeOptions {
   options.downloadOptions = options.downloadOptions || {}
   options.downloadOptions.headers = options.downloadOptions.headers || {}
   options.downloadOptions.headers['User-Agent'] = 'nexe (https://www.npmjs.com/package/nexe)'
-  options.downloadOptions.agent = process.env.HTTPS_PROXY
-    ? caw(process.env.HTTPS_PROXY, { protocol: 'https' })
-    : options.downloadOptions.agent || require('https').globalAgent
+  // Proxy support can be added via downloadOptions.agent if needed
   options.downloadOptions.rejectUnauthorized = process.env.NODE_TLS_REJECT_UNAUTHORIZED
     ? false
     : true

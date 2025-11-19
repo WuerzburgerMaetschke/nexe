@@ -1,7 +1,7 @@
-import { NexeTarget, architectures } from '../lib/target'
-import { writeFileAsync, readFileAsync } from '../lib/util'
+import { NexeTarget, architectures } from '../lib/target.js'
+import { writeFileAsync, readFileAsync } from '../lib/util.js'
 import got from 'got'
-import execa = require('execa')
+import { execa } from 'execa'
 import { appendFileSync } from 'fs'
 
 function alpine(target: NexeTarget) {

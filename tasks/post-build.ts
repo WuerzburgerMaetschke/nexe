@@ -1,5 +1,8 @@
 import { writeFileSync, readFileSync } from 'fs'
-import { template } from 'lodash'
+import { template } from 'lodash-es'
+import { createRequire } from 'module'
+
+const require = createRequire(import.meta.url)
 
 /**
  * post build step to insert code files into code files.
